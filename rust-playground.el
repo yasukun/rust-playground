@@ -92,7 +92,7 @@ By default confirmation required."
   (cd (file-name-directory buffer-file-name))
   (let ((snippet-file buffer-file-name))
     (save-buffer t)
-    (compile (concat rust-playground-bin " " (file-name-nondirectory buffer-file-name)))))
+    (compile (concat rust-playground-bin " -s " (file-name-nondirectory buffer-file-name)))))
 
 ;;;###autoload
 (defun rust-playground ()
