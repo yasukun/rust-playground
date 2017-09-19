@@ -42,7 +42,7 @@
 (require 'time-stamp)
 
 ; I think it should be defined in rust-mode.
-(defcustom rust-playground-bin "rustc"
+(defcustom rust-playground-bin "runner"
   "The ’rust’ command."
   :type 'string
   :group 'rust-mode)
@@ -89,10 +89,10 @@ By default confirmation required."
   "Save the buffer then runs Rust compiler for executing the code."
   (interactive)
   (make-local-variable 'compile-command)
+  (cd (file-name-directory buffer-file-name))
   (let ((snippet-file buffer-file-name))
-	(save-buffer t)	
-	(compile (concat rust-playground-bin " " (shell-quote-argument snippet-file) " -o snippet && "
-			 (file-name-directory snippet-file) "snippet"))))
+    (save-buffer t)
+    (compile (concat rust-playground-bin " " (file-name-nondirectory buffer-file-name)))))
 
 ;;;###autoload
 (defun rust-playground ()
@@ -102,11 +102,8 @@ By default confirmation required."
     (switch-to-buffer (create-file-buffer snippet-file-name))
     (add-hook 'kill-buffer-hook 'rust-playground-on-buffer-kill nil t)
 	(rust-playground-insert-template-head "snippet of code")
-(insert "fn main() {
-
-    println!(\"Results:\")
-
-}")
+(insert "println!(\"Hello, World\");
+")
 (backward-char 3)
 (rust-mode)
 (rust-playground-mode)
@@ -128,7 +125,7 @@ By default confirmation required."
 "))
 
 ;;;###autoload
-(defun rust-playground-rm ()  
+(defun rust-playground-rm ()
   "Remove files of the current snippet together with directory of this snippet."
   (interactive)
   (if (rust-playground-inside)
